@@ -1,0 +1,78 @@
+import { withPluginApi } from "discourse/lib/plugin-api";
+
+const iconNames = [
+  "address-book", "address-card", "align-left", "anchor", "angle-down", "angle-left", "angle-right", "angle-up",
+  "angles-down", "angles-left", "angles-right", "angles-up", "arrow-down", "arrow-left", "arrow-right",
+  "arrow-rotate-left", "arrow-rotate-right", "arrow-up", "arrows-rotate", "asterisk", "at", "award",
+  "backward", "backward-fast", "backward-step", "ban", "bars", "bars-staggered", "bed", "bell", "bell-slash",
+  "bold", "book", "book-open-reader", "bookmark", "bookmark-delete", "box-archive", "briefcase", "bullseye",
+  "cake-candles", "calendar-day", "calendar-days", "caret-down", "caret-left", "caret-right", "caret-up",
+  "category.restricted", "certificate", "chart-bar", "chart-column", "chart-line", "chart-pie", "check",
+  "check-to-slot", "chevron-down", "chevron-left", "chevron-right", "chevron-up", "circle", "circle-check",
+  "circle-chevron-down", "circle-exclamation", "circle-half-stroke", "circle-info", "circle-minus",
+  "circle-plus", "circle-question", "circle-stop", "circle-user", "circle-xmark", "clock", "clock-rotate-left",
+  "cloud-arrow-up", "code", "comment", "comments", "compress", "copy", "crosshairs", "cube", "d-chat",
+  "d-drop-down", "d-drop-up", "d-expand", "d-hover-expand", "d-maximize", "d-minimize", "d-minus", "d-plus",
+  "d-tracking", "d-untracking", "desktop", "discourse-bell", "discourse-compress", "discourse-expand",
+  "discourse-other-ph", "discourse-sparkles", "download", "earth-americas", "ellipsis", "ellipsis-vertical",
+  "envelope", "envelope-open", "exclamation", "exclamation-circle", "exclamation-triangle", "external-link-alt",
+  "eye", "eye-slash", "fab-x-twitter", "face-angry", "face-frown", "face-meh", "face-smile", "far-bell",
+  "far-bell-slash", "far-bookmark", "far-calendar-plus", "far-chart-bar", "far-circle", "far-circle-check",
+  "far-circle-dot", "far-circle-question", "far-clipboard", "far-clock", "far-comment", "far-comments",
+  "far-copy", "far-copyright", "far-credit-card", "far-envelope", "far-eye", "far-eye-slash", "far-face-frown",
+  "far-face-meh", "far-face-smile", "far-file-lines", "far-heart", "far-image", "far-moon", "far-pen-to-square",
+  "far-rectangle-list", "far-square", "far-square-check", "far-star", "far-sun", "far-thumbs-down", "far-thumbs-up",
+  "far-trash-can", "file", "file-arrow-up", "file-audio", "file-csv", "file-image", "file-lines", "file-signature",
+  "file-video", "filter", "filter-circle-xmark", "fire", "flag", "flask", "floppy-disk", "folder", "folder-open",
+  "font", "forward", "forward-fast", "forward-step", "gavel", "gear", "gears", "gift", "globe", "grip-lines",
+  "heart", "heading", "history", "hourglass-start", "house", "id-card", "image", "inbox", "info-circle", "italic",
+  "key", "keyboard", "layer-group", "left-right", "link", "link-slash", "list", "list-check", "list-ol", "list-ul",
+  "location-dot", "lock", "magic", "magnifying-glass", "medal", "microphone-slash", "minus", "minus-circle",
+  "mobile-screen-button", "moon", "outdent", "paintbrush", "paper-plane", "paperclip", "paste", "pause", "pen",
+  "pen-to-square", "pencil", "phone", "play", "plug", "plus", "plus-circle", "plus-square", "power-off",
+  "puzzle-piece", "question", "question-circle", "quote-left", "quote-right", "redo", "reply",
+  "right-from-bracket", "right-left", "right-to-bracket", "rocket", "rotate", "rotate-left", "rotate-right",
+  "search", "share", "share-nodes", "shield-halved", "shuffle", "signal", "signs-post", "sliders", "sort",
+  "spell-check", "spinner", "square-check", "square-envelope", "square-full", "square-plus", "square-root-variable",
+  "stamp", "star", "sun", "sync", "table", "table-cells", "table-cells-minus", "table-cells-plus", "table-columns",
+  "tag", "tags", "temperature-three-quarters", "thumbs-down", "thumbs-up", "thumbtack", "ticket-simple",
+  "toggle-off", "toggle-on", "topic.closed", "topic.opened", "trash-can", "triangle-exclamation", "trophy",
+  "truck-medical", "undo", "unlock", "unlock-keyhole", "up-down", "up-right-from-square", "upload", "user",
+  "user-check", "user-gear", "user-group", "user-pen", "user-plus", "user-secret", "user-shield", "user-xmark",
+  "user_menu.drafts", "user_menu.replies", "users", "video", "wrench", "xmark", "notification.assigned",
+  "notification.bookmark_reminder", "notification.chat_quoted", "notification.edited", "notification.following",
+  "notification.following_created_topic", "notification.following_replied", "notification.granted_badge",
+  "notification.group_mentioned", "notification.group_message_summary", "notification.invited_to_private_message",
+  "notification.invited_to_topic", "notification.invitee_accepted", "notification.liked", "notification.liked_2",
+  "notification.liked_consolidated", "notification.liked_many", "notification.linked",
+  "notification.linked_consolidated", "notification.membership_request_accepted",
+  "notification.membership_request_consolidated", "notification.mentioned", "notification.moved_post",
+  "notification.post_approved", "notification.posted", "notification.private_message", "notification.quoted",
+  "notification.reaction", "notification.replied", "notification.topic_reminder", "notification.votes_released",
+  "notification.watching_first_post", "robot", "discobot", "clipboard", "cloud-arrow-down", "code-branch",
+  "comment-dots", "comment-slash", "cubes", "discourse-bell-slash", "discourse-bell-exclamation",
+  "discourse-bell-one", "diagram-project", "discourse-add-translation", "discourse-amazon",
+  "discourse-bookmark-clock", "discourse-chat-search", "discourse-chevron-collapse", "discourse-chevron-expand",
+  "discourse-dnd", "discourse-emojis", "discourse-flask-check", "discourse-follow-new-follower",
+  "discourse-follow-new-reply", "discourse-follow-new-topic", "discourse-h1", "discourse-h2", "discourse-h3",
+  "discourse-h4", "discourse-h5", "discourse-other-tab", "discourse-sidebar", "discourse-table",
+  "discourse-table-sparkles", "discourse-text", "discourse-threads", "eye-dropper", "graduation-cap", "group-plus",
+  "group-times", "hand", "hand-point-right", "handshake", "handshake-angle", "hashtag", "headset", "images",
+  "info", "language", "location-pin", "magnifying-glass-minus", "magnifying-glass-plus", "nested-circle-minus",
+  "nested-circle-plus", "nested-thread", "palette", "patreon-new", "rectangle-ad", "repeat", "rss",
+  "screwdriver-wrench", "scroll", "sign-hanging", "volume-high", "volume-xmark", "vote-up", "vote-up-filled",
+  "wand-magic", "wand-magic-sparkles",
+  "magic", "discourse-summarize", "leaderboard", "birthday-cake", "cakeday",
+  "trophy", "robot", "discourse-sparkles", "cake-candles"
+];
+
+export default {
+  name: "solar-icons",
+  initialize() {
+    withPluginApi("0.8", (api) => {
+      iconNames.forEach((fa) => {
+        api.replaceIcon(fa, `solar-${fa}`);
+      });
+    });
+  },
+};
